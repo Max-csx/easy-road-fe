@@ -2,7 +2,8 @@ import { View, Text } from "@tarojs/components";
 import { IconFont } from "@nutui/icons-react-taro";
 import "./index.scss";
 import { WEATHER_MAP } from "./constants";
-
+import IconFontComp from "../IconFont";
+import isNil from "lodash/isNil";
 export type forecastWeatherItemType = {
   date?: string;
   week?: string;
@@ -48,20 +49,40 @@ const Weather = (props: weatherInfoType) => {
 
   return (
     <View className="weather-info">
-      <Text>{liveWeather?.area}</Text>
+      <View className="location-and-waeatherIcon">
+        <View className="location">
+          <Text className="location-text"> {liveWeather?.area}</Text>
+          <IconFontComp name="dingwei" size="14" />
+        </View>
+        <View className="weather-icon-text">
+          {weatherIconName ? (
+            <IconFont
+              fontClassName="iconfont"
+              classPrefix="icon"
+              name={weatherIconName}
+              color="#999"
+            />
+          ) : null}
+          <Text className="weather-text">{liveWeather?.weather}</Text>
+        </View>
+      </View>
 
-      {weatherIconName ? (
-        <IconFont
-          fontClassName="iconfont"
-          classPrefix="icon"
-          name={weatherIconName}
-          color="#cff6ff"
-        />
-      ) : null}
-      <Text className="city">{liveWeather?.weather}</Text>
-      <Text className="city">
-        {liveWeather?.temperature ? `${liveWeather?.temperature}℃` : null}
-      </Text>
+      <View className="weather-temperature">
+        <View>
+          {isNil(liveWeather?.temperature) ? null : (
+            <Text>
+              <Text className="weather-temperature-num">
+                {liveWeather?.temperature || ""}
+              </Text>
+              <Text className="weather-temperature-unit">°C</Text>
+            </Text>
+          )}
+        </View>
+        <View>
+          <Text>{liveWeather?.winddirection}</Text>
+          <Text>{liveWeather?.windpower}</Text>
+        </View>{" "}
+      </View>
 
       <View className="current-weather"></View>
     </View>

@@ -56,8 +56,10 @@
     "@tarojs/taro": "4.0.7",
     "ahooks": "^3.8.1",
     "axios": "^1.7.8",
+    "lodash": "^4.17.21",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",

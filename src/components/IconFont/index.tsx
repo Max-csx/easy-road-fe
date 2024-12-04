@@ -15,7 +15,7 @@ interface IconFontProps {
   children?: React.ReactNode;
 }
 const defaultProps = {
-  color: "#cff6ff",
+  color: "#999",
   classPrefix: "icon",
   fontClassName: "iconfont",
 };
