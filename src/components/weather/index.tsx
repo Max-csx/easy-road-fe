@@ -1,9 +1,13 @@
 import { View, Text } from "@tarojs/components";
-import { IconFont } from "@nutui/icons-react-taro";
+import { IconFont, AngleDoubleDown } from "@nutui/icons-react-taro";
 import "./index.scss";
-import { WEATHER_MAP } from "./constants";
+import { WEATHER_MAP, WEEK_DAY_MAP } from "./constants";
 import IconFontComp from "../IconFont";
 import isNil from "lodash/isNil";
+import { Popup } from "@nutui/nutui-react-taro";
+import { useBoolean } from "ahooks";
+import dayjs from "dayjs";
+
 export type forecastWeatherItemType = {
   date?: string;
   week?: string;
@@ -30,28 +34,22 @@ export type liveWeatherItemType = {
   area?: string;
 };
 
-export type weatherInfoType = {
-  area?: string;
-  city?: string;
-  province?: string;
-  reporttime?: string;
-  temperature?: string;
-  liveWeather?: liveWeatherItemType;
-  forecastWeather?: Array<forecastWeatherItemType>;
-  loading?: boolean;
+export type weatherInfoType = liveWeatherItemType & {
+  forecasts: forecastWeatherItemType[];
 };
-
-const Weather = (props: weatherInfoType) => {
-  const { liveWeather } = props;
-  const weatherIconName = liveWeather?.weather
-    ? WEATHER_MAP[liveWeather?.weather]
+const Weather = (props: { weatherInfo: weatherInfoType }) => {
+  const { weatherInfo } = props;
+  console.log("🚀 ~ Weather ~ weatherInfo:", weatherInfo);
+  const [showPopup, { toggle }] = useBoolean(false);
+  const weatherIconName = weatherInfo?.weather
+    ? WEATHER_MAP[weatherInfo?.weather]
     : null;
 
   return (
     <View className="weather-info">
       <View className="location-and-waeatherIcon">
         <View className="location">
-          <Text className="location-text"> {liveWeather?.area}</Text>
+          <Text className="location-text"> {weatherInfo?.area}</Text>
           <IconFontComp name="dingwei" size="14" />
         </View>
         <View className="weather-icon-text">
@@ -63,28 +61,76 @@ const Weather = (props: weatherInfoType) => {
               color="#999"
             />
           ) : null}
-          <Text className="weather-text">{liveWeather?.weather}</Text>
+          <Text className="weather-text">{weatherInfo?.weather}</Text>
         </View>
       </View>
 
       <View className="weather-temperature">
         <View>
-          {isNil(liveWeather?.temperature) ? null : (
+          {isNil(weatherInfo?.temperature) ? null : (
             <Text>
               <Text className="weather-temperature-num">
-                {liveWeather?.temperature || ""}
+                {weatherInfo?.temperature || ""}
               </Text>
               <Text className="weather-temperature-unit">°C</Text>
             </Text>
           )}
         </View>
-        <View>
-          <Text>{liveWeather?.winddirection}</Text>
-          <Text>{liveWeather?.windpower}</Text>
-        </View>{" "}
+        <View className="wind-and-showforecasts-wrap">
+          <Text>{weatherInfo?.winddirection}</Text>
+          <Text>{weatherInfo?.windpower}</Text>
+          <AngleDoubleDown onClick={toggle} />
+        </View>
       </View>
-
-      <View className="current-weather"></View>
+      <Popup visible={showPopup} onClose={toggle} position="top">
+        <View className="forecasts-weather-wrap">
+          <Text className="forecasts-title">天气预报</Text>
+          <View className="forecasts-weather">
+            {weatherInfo?.forecasts?.map((item) => {
+              return (
+                <View
+                  className={`forecasts-item ${
+                    dayjs().isSame(dayjs(item.date), "day")
+                      ? "forecasts-item-today"
+                      : ""
+                  }`}
+                  key={`${item.week}`}
+                >
+                  <View className="forecasts-item-text">
+                    {isNil(item.week) ? null : WEEK_DAY_MAP[item.week]}
+                  </View>
+                  <View className="forecasts-item-text">
+                    {isNil(item.date) ? null : item.date}
+                  </View>
+                  <View className="forecasts-item-text">
+                    {isNil(item.daytemp)
+                      ? null
+                      : `${item.nighttemp}°C-${item.daytemp}°C`}
+                  </View>
+                  <View className="forecasts-item-text">
+                    {item.nightweather === item.dayweather
+                      ? item.nightweather
+                      : `${item.dayweather}转${item.nightweather}`}
+                  </View>
+                  <View className="forecasts-item-text">
+                    {item.daywind === item.nightwind
+                      ? `${item.nightwind}风`
+                      : `${item.daywind}风转${item.nightwind}风`}
+                    {item.daypower === item.nightpower
+                      ? `${item.nightpower}级`
+                      : `${item.daypower}级转${item.nightpower}级`}
+                  </View>
+                  <View className="forecasts-item-text">
+                    {item.nightweather === item.dayweather
+                      ? item.nightweather
+                      : `${item.dayweather}转${item.nightweather}`}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </Popup>
     </View>
   );
 };

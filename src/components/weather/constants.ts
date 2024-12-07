@@ -12,7 +12,7 @@ export const WEATHER_MAP = {
   平静: "pingjing",
   强风: "tianqitubiao_dafeng",
   劲风: "tianqitubiao_dafeng",
-  '强风/劲风': "tianqitubiao_dafeng",
+  "强风/劲风": "tianqitubiao_dafeng",
   疾风: "tianqitubiao_dafeng",
   大风: "tianqitubiao_dafeng",
   烈风: "tianqitubiao_dafeng",
@@ -65,4 +65,24 @@ export const WEATHER_MAP = {
   热: "tianqitubiao_qing",
   冷: "tianqitubiao_daxue",
   未知: "huaban",
+};
+
+export const enum WEEK_DAY {
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
+  SUNDAY = 7,
+}
+
+export const WEEK_DAY_MAP = {
+  "1": "星期一",
+  "2": "星期二",
+  "3": "星期三",
+  "4": "星期四",
+  "5": "星期五",
+  "6": "星期六",
+  "7": "星期日",
 };

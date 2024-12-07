@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
-import { GET_ADCODE_API } from "../constants/api";
+import { GET_ADCODE_API } from "../service/api";
 import { useLocationStore, LocationStore } from "src/store/common";
 import { isEqual } from "lodash";
 
@@ -40,12 +40,11 @@ const useLocation = () => {
           location: `${longitude},${latitude}`,
         },
       });
-      const city = data.data.regeocode?.addressComponent?.adcode;
+
       const newLocation = {
         latitude,
         longitude,
-        adcode: city,
-        city,
+        ...data.data.regeocode?.addressComponent,
       };
       if (!isEqual(location, newLocation)) {
         setLocation(newLocation);

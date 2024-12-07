@@ -1,27 +1,31 @@
 import React, { useMemo } from "react";
 import "./index.scss";
-import Taro from "@tarojs/taro";
-import { WEATHER_API } from "../../constants/api";
 import useRequest from "ahooks/lib/useRequest";
-import type { liveWeatherItemType } from "src/components/weather";
 import Weather from "src/components/weather";
 import { Skeleton } from "@nutui/nutui-react-taro";
 import Map from "src/components/map";
 import useLocation from "src/hooks/useLocation";
+import { getWeather } from "../../service/api";
 function Index() {
   const { location } = useLocation();
 
-  const { data: liveWeather, loading } = useRequest(
+  const { data, loading } = useRequest(
     async () => {
-      const { city } = location;
-      const weatherData = await Taro.request({
-        url: WEATHER_API,
-        data: {
-          city,
-          extensions: "base",
-        },
-      });
-      return weatherData.data?.lives as liveWeatherItemType[];
+      const { adcode } = location;
+
+      const PromiseList = [
+        getWeather({ city: adcode, extensions: "base" }),
+        getWeather({ city: adcode, extensions: "all" }),
+      ];
+      const weatherData = await Promise.all(PromiseList);
+      console.log(weatherData, "weatherData");
+      const lives = weatherData[0].data.lives;
+      const forecasts = weatherData[1].data.forecasts;
+      return {
+        lives,
+        forecasts,
+      }
+
     },
     {
       refreshDeps: [location.adcode],
@@ -30,21 +34,23 @@ function Index() {
   );
 
   const weatherInfo = useMemo(() => {
-    const localInfo = liveWeather?.[0];
+    const   { lives, forecasts } = data || {};
+    const localInfo = lives?.[0];
     const city = localInfo?.city;
     const province = localInfo?.province;
 
     return {
       area: province ? `${province} ${city}` : "",
       ...localInfo,
+      forecasts: forecasts?.[0].casts,
     };
-  }, [liveWeather]);
+  }, [data]);
 
-  console.log(weatherInfo, "weatherInfo");
+
 
   return (
     <Skeleton visible={!loading} rows={3} title animated>
-      <Weather liveWeather={weatherInfo} loading={loading} />
+      <Weather weatherInfo={weatherInfo} loading={loading} autoPlay={true} controls={true} />
       <Map {...location} />
     </Skeleton>
   );
