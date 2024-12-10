@@ -37,9 +37,10 @@ export type liveWeatherItemType = {
 export type weatherInfoType = liveWeatherItemType & {
   forecasts: forecastWeatherItemType[];
 };
-const Weather = (props: { weatherInfo: weatherInfoType }) => {
+const Weather = (props: {
+  weatherInfo: weatherInfoType & { loading: boolean };
+}) => {
   const { weatherInfo } = props;
-  console.log("🚀 ~ Weather ~ weatherInfo:", weatherInfo);
   const [showPopup, { toggle }] = useBoolean(false);
   const weatherIconName = weatherInfo?.weather
     ? WEATHER_MAP[weatherInfo?.weather]
