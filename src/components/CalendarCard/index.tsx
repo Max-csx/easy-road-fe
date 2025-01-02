@@ -1,13 +1,15 @@
-import React, { useMemo, useState, memo } from "react";
-import {
-  CalendarCard,
-  type CalendarCardValue,
-  type CalendarCardDay,
-} from "@nutui/nutui-react-taro";
+import React, {
+  useMemo,
+  useState,
+  memo,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
+import { CalendarCard, type CalendarCardDay } from "@nutui/nutui-react-taro";
 import dayjs from "dayjs";
 import useRequest from "ahooks/lib/useRequest";
 import Taro from "@tarojs/taro";
-import './index.scss'
+import "./index.scss";
 
 interface Holiday {
   date: string;
@@ -19,7 +21,7 @@ interface Holiday {
 }
 const date = new Date();
 
-const CalendarCardComp = () => {
+const CalendarCardComp = forwardRef<any, any>((props,ref) => {
   const [year, setYear] = useState(null);
 
   const renderDayTop = (day: CalendarCardDay) => {
@@ -57,6 +59,10 @@ const CalendarCardComp = () => {
     page && setYear(page?.year);
   };
 
+
+  useImperativeHandle(ref, ()=> ({
+    getHoliday: ()  => data as Holiday[],
+  }));
   return (
     <CalendarCard
       className="calendar-card-wrapper"
@@ -64,7 +70,8 @@ const CalendarCardComp = () => {
       renderDayTop={renderDayTop}
       renderDayBottom={renderDayBottom}
       onPageChange={onPageChange}
+      {...props}
     />
   );
-};
+});
 export default memo(CalendarCardComp);

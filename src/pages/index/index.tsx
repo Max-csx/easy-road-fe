@@ -1,15 +1,29 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import "./index.scss";
 import useRequest from "ahooks/lib/useRequest";
 import Weather from "src/components/weather";
-import { Skeleton } from "@nutui/nutui-react-taro";
 import useLocation from "src/hooks/useLocation";
-import CalendarCardComp from "src/components/calendarCard";
+import CalendarCardComp from "src/components/CalendarCard";
 import { getWeather } from "../../service/api";
 import { View } from "@tarojs/components";
+import { NoticeBar } from "@nutui/nutui-react-taro";
+import dayjs from "dayjs";
+
+interface Holiday {
+  date?: string;
+  holiday?: boolean;
+  name?: string;
+  waga?: number;
+  rest?: number;
+  target?: string;
+  notice?: string;
+}
+
 function Index() {
   const { location } = useLocation();
+  const holidayRef = useRef(null);
 
+  const [noticeInfo, setNoticeInfo] = useState({}as Holiday) ;
   const { data, loading } = useRequest(
     async () => {
       const { adcode } = location;
@@ -45,15 +59,30 @@ function Index() {
     };
   }, [data]);
 
+  useEffect(() => {
+    if (holidayRef?.current?.getHoliday) {
+      const currentYearHoliday = holidayRef?.current
+        ?.getHoliday()
+        ?.filter((i) => i?.holiday);
+      const afterFirstHoliday = currentYearHoliday?.find((i) =>
+        dayjs(i?.date).isAfter(dayjs().startOf("day"))
+      );
+      setNoticeInfo({
+        ...afterFirstHoliday,
+        notice: `距离${afterFirstHoliday?.date}${afterFirstHoliday?.name}还有${afterFirstHoliday?.rest}天`,
+      });
+    }
+  }, [holidayRef?.current?.getHoliday]);
+
   return (
     <View>
-      <Weather
-        weatherInfo={weatherInfo}
-        loading={loading}
-        autoPlay={true}
-        controls={true}
-      />
-      <CalendarCardComp />
+      {noticeInfo?.date ? (
+        <NoticeBar
+          content={noticeInfo?.notice}
+        />
+      ) : null}
+      <Weather weatherInfo={weatherInfo} loading={loading} />
+      <CalendarCardComp ref={holidayRef} />
     </View>
   );
 }

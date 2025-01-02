@@ -15,10 +15,20 @@ export interface StreetNumber {
   distance: string;
 }
 
+export interface UserInfo {
+  avatarUrl: string;
+  city: string;
+  gender: number;
+  language: string;
+  nickName: string;
+  province: string;
+}
+
 export interface LocationStore {
   location: LocationState;
   setLocation: (location: LocationState) => void;
 }
+
 export const useLocationStore = create(
   (set): LocationStore => ({
     location: {
@@ -28,5 +38,24 @@ export const useLocationStore = create(
       adcode: "",
     },
     setLocation: (location) => set(() => ({ location })),
+  })
+);
+
+export interface UserInfoStore {
+  userInfo: UserInfo;
+  setUserInfo: (location: LocationState) => void;
+}
+
+export const useUserInfoStore = create(
+  (set): UserInfoStore => ({
+    userInfo: {
+      avatarUrl: "",
+      city: "",
+      gender: 0,
+      language: "",
+      nickName: "",
+      province: "",
+    },
+    setUserInfo: (userInfo) => set(() => ({ userInfo })),
   })
 );

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useDidShow, useDidHide } from '@tarojs/taro'
+import Taro, { useDidShow, useDidHide,useLaunch } from '@tarojs/taro'
 // 全局样式
 import './app.scss'
 import './assets/iconfont/iconfont.css'
@@ -13,6 +13,12 @@ function App(props) {
 
   // 对应 onHide
   useDidHide(() => {})
+
+  useLaunch(()=>{
+
+  })
+
+
 
   return props.children
 }

@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  pages: ["pages/index/index", "pages/menu/index", "pages/map/index"],
+  pages: ["pages/index/index", "pages/menu/index", "pages/map/index","pages/user/index"],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
@@ -24,6 +24,10 @@ export default defineAppConfig({
       {
         pagePath: "pages/menu/index",
         text: "更多",
+      },
+      {
+        pagePath: "pages/user/index",
+        text: "我的",
       },
     ],
   },
